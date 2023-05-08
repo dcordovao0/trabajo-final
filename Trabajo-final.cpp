@@ -1,7 +1,7 @@
 /*
 Trabajo final de Programación en C++ I
 Profesor: Felipe Grijalva
-Nombres: Danny Córdova/Brandom Mosquera
+Nombres: Danny Córdova/Brandom Mosquera/Cristina Proaño/ Marco Calderon
 */
 
 #include <iostream>
