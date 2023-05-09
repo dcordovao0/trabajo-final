@@ -174,11 +174,16 @@ int exp(string& term){
             ex = 1;
         }
         else{
-            exponentes = term[pos+1];
+            pos=pos+1;
+            while (pos<term.size()){
+                exponentes=exponentes+term[pos];
+                pos = pos+1;
+            }
             stringstream ss(exponentes); 
             ss>>ex; //esta función que me permite transformar un string a entero, siempre que sea posible
         }
     }
+
     return ex;
 }
 
@@ -208,12 +213,11 @@ string search_and_destroy(string& term,char& c){
 
 double erasse(string& term){
 
-    /*Elimina todo lo que no sean los coeficinetes y los exponentes (borra los signos también, pero se asegura de tomar 
-    en cuenta los negativos al momento de almacenar los coeficientes)*/
-    if(exp(term) > 1){
-        size_t er = term.size() -1;
-        term.erase((er),1);
+    size_t aux = term.find('x');
+    if (aux != string::npos){
+        term = term.substr(0,aux); //Este código se encarga de tomar todo lo que está antes de la x
     }
+
 
     bool minus = false;
     if (signo(term) == 1){
