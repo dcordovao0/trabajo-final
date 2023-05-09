@@ -62,10 +62,10 @@ for(int j = 0; j < intpol; j++){
         getline(cin >> ws,cadena); //cin>>ws elimina cualquier espacio en blanco inicial en la entrada antes de la lectura
         cadena_valida=esp(cadena); //Aquí se ejecuta la función esp() que borra los espacios
         cout << "Cadena sin espacios: " << cadena_valida <<endl;
-        
+        ter = "";
         for(size_t k = 0;k<cadena_valida.size();k++){ //Este for almacena los términos de cada polinomio 
            c = cadena_valida[k];
-           if(c == '+' or c == '-'){  //Si el programa lee un "+" o un "-" almacena lo que estaba antes de ese signo como un término
+           if(c == '+' || c == '-'){  //Si el programa lee un "+" o un "-" almacena lo que estaba antes de ese signo como un término
                terminos.push_back(ter);
                ter = c;
            }
@@ -95,6 +95,7 @@ for(int j = 0; j < intpol; j++){
             alcoe.push_back(0);
         };
         for(int h = 0; h < terminos.size(); h++){
+            cout <<"Llegue a coeficientes"<<endl; 
             part = terminos[h];
             exx = exp(part);
             coeficiente = erasse(part); //Uso la función erasse() para eliminar signos (+,-,*) y la variable x
@@ -102,7 +103,12 @@ for(int j = 0; j < intpol; j++){
         }
         Polte.coef=alcoe;
 
+        // vector<double>* almacenPtr = Polte.coef;
+        // delete almacenPtr;
+        // almacenPtr = 0;
+        
         vector<double>almacen = Polte.coef;
+        
         int grado = Polte.grado;
 
         cout << "Datos del polinomio cargado: " << endl;
