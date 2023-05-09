@@ -8,6 +8,7 @@ Nombres: Danny Córdova/Brandom Mosquera/Cristina Proaño/ Marco Calderon
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <sstream>
 
 using namespace std;
 
