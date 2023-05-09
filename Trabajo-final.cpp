@@ -9,6 +9,7 @@ Nombres: Danny Córdova/Brandom Mosquera/Cristina Proaño/ Marco Calderon
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <cctype>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ struct tPolinomio{
     vector<double>coef;
 };
 
+bool number_validation(string& num_pol);
 string esp(string& cadena);
 void print_string(vector<string>& vect);
 void print_coe(vector<double>& vect);
@@ -31,16 +33,29 @@ int main()
     string cadena; //polinomio ingresado por el usuario
     string cadena_valida; //polinomio sin espacios
     string ter="";  //cada término del polinomio que se va guardando en un vector
-    int num_pol; // Numero de repeticiones para ingresar el polinomio
+    string num_pol; // Numero de repeticiones para ingresar el polinomio
     char c;
 
     cout << "Ingrese la cantidad de polinomios: ";
-    cin >> num_pol;
-    cin.ignore(); // Ignoramos el salto de línea que queda en el buffer
-
+    getline(cin,num_pol);
+    
+    //Validación si la entrada es un entero
+    while(number_validation(num_pol)==false){
+        cout<<"Por favor, ingrese un numero entero. Ingrese la cantidad de polinomios: ";
+        getline(cin,num_pol);
+    }
+    
+    int intpol;
+    if(number_validation(num_pol)){ 
+        istringstream iss(num_pol);
+        while(iss and !(iss>>intpol)){ 
+            bool is_digit;
+            is_digit=false;       
+        }
+    }         
     vector<tPolinomio>polinomios;
 
-for(int j = 0; j < num_pol; j++){
+for(int j = 0; j < intpol; j++){
         vector<string>terminos;
         int deg = 0;
         cout << "Ingrese el polinomio " << j + 1 << ": ";
@@ -98,6 +113,17 @@ for(int j = 0; j < num_pol; j++){
     }
 
     return 0;
+}
+
+bool number_validation(string& num_pol){
+     bool is_digit = true;
+  for (char c : num_pol) {
+    if (!isdigit(c)) { //is digit reconoce si los char de una cadena de strings son números y no otros símbolos
+      is_digit = false;
+      break;
+    }
+  }
+    return is_digit;
 }
 
 string esp(string& cadena){
