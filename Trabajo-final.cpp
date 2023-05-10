@@ -20,6 +20,7 @@ struct tPolinomio{
 
 //Prototipos de funciones, en la parte de abajo se encuentra el funcionamiento de cada una 
 bool number_validation(string& num_pol);
+string Validacion_cadena(string& num_pol);
 bool check_pol(string& cadena);
 string esp(string& cadena);
 string bye_zero(string& cadena_valida);
@@ -48,29 +49,28 @@ int main()
         getline(cin,num_pol);
     }
     
+    cadena_valida=Validacion_cadena(num_pol);
+    number_validation(cadena_valida);
     int intpol;
-    if(number_validation(num_pol)){ 
-        istringstream iss(num_pol);
-        while(iss and !(iss>>intpol)){ 
-            bool is_digit;
-            is_digit=false;       
-        }
-    }         
+    intpol=stoi(cadena_valida);
     vector<tPolinomio>polinomios;
 
 for(int j = 0; j < intpol; j++){
         vector<string>terminos;
         int deg = 0;
+
         bool ErrorInsertar = 1; //fuerza la entrada al while para cada polinomio
 		while(ErrorInsertar == 1){ //Verifica que los datos del string sean correctos
 			ErrorInsertar = 0;
 			cout<<"Polinomio "<<j+1<<": ";
 			getline(cin >> ws, cadena);
-            if(cadena[0]!=0) cadena.insert(0,"0"); /*Inserta un 0 al inicio para evitar errores en la lectura cuando se ingresa un
-            '+' o un '-' al inicio*/ 
             ErrorInsertar=check_pol(cadena);		
 		}
         cadena_valida=esp(cadena); //Aquí se ejecuta la función esp() que borra los espacios
+        if(cadena_valida[0]=='+' or cadena_valida[0]=='-') cadena_valida.insert(0,"0"); /*Inserta un 0 al inicio para evitar errores en la lectura cuando se ingresa un
+            '+' o un '-' al inicio*/  
+        else if(cadena_valida[0]=='x') cadena_valida.insert(0,"1");
+        else if((cadena_valida[0]=='+' or cadena_valida[0]=='-') and cadena_valida[1]=='x') cadena_valida.insert(0,"0");
         cadena_valida=bye_zero(cadena_valida); //Se ejecuta la función bye_zero que elimina los ceros después del punto decimal del exp
         cout << "Cadena sin espacios: " << cadena_valida <<endl;
         ter = "";
@@ -113,10 +113,6 @@ for(int j = 0; j < intpol; j++){
         }
         Polte.coef=alcoe;
 
-        // vector<double>* almacenPtr = Polte.coef;
-        // delete almacenPtr;
-        // almacenPtr = 0;
-        
         vector<double>almacen = Polte.coef;
         
         int grado = Polte.grado;
@@ -132,14 +128,41 @@ for(int j = 0; j < intpol; j++){
 }
 
 bool number_validation(string& num_pol){
-     bool is_digit = true;
-  for (char c : num_pol) {
-    if (!isdigit(c)) { //is digit reconoce si los char de una cadena de strings son números y no otros símbolos
-      is_digit = false;
-      break;
-    }
-  }
+    bool is_digit = true;   
+	for (char c : num_pol) {
+    	if (!isdigit(c) || c=='.') { //is digit reconoce si los char de una cadena de strings son números y no otros símbolos
+    		is_digit = false;
+     		break;
+    	}
+	}
     return is_digit;
+}
+
+string Validacion_cadena(string& num_pol){
+	string numPolTemp;
+	for(int j=0; j<num_pol.length();j++){
+		if(num_pol[j]!='.'){
+		numPolTemp.push_back(num_pol[j]);
+		continue;
+		}
+		//El if se mueve por la string desde el punto
+		else if(num_pol[j]=='.'){
+			for(int k=j+1; k<num_pol.length();k++){
+				//Si es distinto de 0 lo vuelve un signo
+				if(num_pol[k]!='0' ){
+					numPolTemp.push_back('&'); //Para que de error en la validacion despues si el numero es fraccionario
+					j=num_pol.length(); //para que salga del primero for 
+					break; //para que salga del segundo for
+				}
+				//Si es 0 lo continua
+				else{
+                	j=k;
+					continue;
+				}
+			}
+		}
+    }
+    return (numPolTemp);
 }
 
 bool check_pol(string& cadena){
