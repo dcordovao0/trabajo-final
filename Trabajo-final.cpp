@@ -18,8 +18,11 @@ struct tPolinomio{
     vector<double>coef;
 };
 
+//Prototipos de funciones, en la parte de abajo se encuentra el funcionamiento de cada una 
 bool number_validation(string& num_pol);
+bool check_pol(string& cadena);
 string esp(string& cadena);
+string bye_zero(string& cadena_valida);
 void print_string(vector<string>& vect);
 void print_coe(vector<double>& vect);
 int exp(string& term);
@@ -58,9 +61,15 @@ int main()
 for(int j = 0; j < intpol; j++){
         vector<string>terminos;
         int deg = 0;
-        cout << "Ingrese el polinomio " << j + 1 << ": ";
-        getline(cin >> ws,cadena); //cin>>ws elimina cualquier espacio en blanco inicial en la entrada antes de la lectura
+        bool ErrorInsertar = 1; //fuerza la entrada al while para cada polinomio
+		while(ErrorInsertar == 1){ //Verifica que los datos del string sean correctos
+			ErrorInsertar = 0;
+			cout<<"Polinomio "<<j+1<<": ";
+			getline(cin >> ws, cadena);
+            ErrorInsertar=check_pol(cadena);		
+		}
         cadena_valida=esp(cadena); //Aquí se ejecuta la función esp() que borra los espacios
+        cadena_valida=bye_zero(cadena_valida); //Se ejecuta la función bye_zero que elimina los ceros después del punto decimal del exp
         cout << "Cadena sin espacios: " << cadena_valida <<endl;
         ter = "";
         for(size_t k = 0;k<cadena_valida.size();k++){ //Este for almacena los términos de cada polinomio 
@@ -95,7 +104,6 @@ for(int j = 0; j < intpol; j++){
             alcoe.push_back(0);
         };
         for(int h = 0; h < terminos.size(); h++){
-            cout <<"Llegue a coeficientes"<<endl; 
             part = terminos[h];
             exx = exp(part);
             coeficiente = erasse(part); //Uso la función erasse() para eliminar signos (+,-,*) y la variable x
@@ -132,6 +140,50 @@ bool number_validation(string& num_pol){
     return is_digit;
 }
 
+bool check_pol(string& cadena){
+    bool ErrorInsertar = 0;
+    for(int k=0; k<cadena.length();k++){
+	    //Revisa caracteres que no irian en un polinomio
+		if((cadena[k]<'0' || cadena[k]>'9') && (cadena[k]!='x' && cadena[k]!='+' && 
+		cadena[k]!='-' && cadena[k]!='*' && cadena[k]!='.' && cadena[k]!=' ')){
+			ErrorInsertar = 1;
+			break;	
+		}
+		//Revisa si el caracter es un numero y es como maximo el penultimo termino ya que se evalua mas adelante el penultimo termino
+		//el ultimo termino no afecta en si es un espacio o un numero
+		if ((cadena[k]>='0' || cadena[k]<='9') && k<cadena.length()-2){ 
+		//Revisa si el siguiente termino es un caracter disntinto de " "
+		if((cadena[k+1]>='0' && cadena[k+1]<='9') || cadena[k]=='x' || cadena[k]=='+' || 
+		cadena[k]=='-' || cadena[k]=='*' || cadena[k]=='.'){
+			continue;
+		}
+	    //Revisa si el siguiente termino es un " " y no es el ultimo termino ya que no afectaria.
+		else if (cadena[k+1]==' ' && (k+1)!=(cadena.length()-1)){
+		//Establece k como el termino despues del " "
+		for(int h=k+2;k<cadena.length();h++){
+		//Mira si k es un caracter disntinto de " " o un numero por lo que seria valido y saldria del for
+		    if(cadena[h]=='x' || cadena[h]=='+' || 
+			cadena[h]=='-' || cadena[h]=='*' || cadena[h]=='.'){
+				break;
+			}
+	    //Mira si k es un numero lo cual daria un erro y evitar leer Ej. 10   10 = 1010
+			else if(cadena[h]>='0' && cadena[h]<='9'){
+				ErrorInsertar = 1;
+				break;
+			}
+			//Si k es un espacio continua el for a revisar el proximo termino que no sea un " "
+			else if(cadena[h]==' '){
+				continue;
+							}
+			    }
+		    }
+		}
+	}
+			if(ErrorInsertar == 1)
+				cout<<"Inserte correctamente el polinomio, por favor"<<endl;
+            return ErrorInsertar;
+}
+
 string esp(string& cadena){
 
     //Quita espacios en blanco
@@ -144,6 +196,32 @@ string esp(string& cadena){
             ptr++; // Avanzamos al siguiente caracter
             }
             return cadena_valida;
+}
+
+string bye_zero(string& cadena_valida){
+    string PolTemp;
+	for(int k=0; k<cadena_valida.length();k++){
+	    //si el char es un disnto de . lo copia
+		if(cadena_valida[k]!='.')
+			PolTemp.push_back(cadena_valida[k]);
+			//El if se mueve por la string desde el punto hasta encontrar otra parte del polinomio o el final
+		else if(cadena_valida[k]=='.'){
+			for(int h=k; h<cadena_valida.length();h++){
+			//Encuentra otra parte del polinomio
+				if(cadena_valida[h]=='+' || cadena_valida[h]=='-' ||  cadena_valida[h]=='*' ){
+					k=h-1; //Para que copie el simbolo exacto y no el siguiente ya que la j va a aumentar con el for
+					break;
+				}
+				//Por si llega al final del polinomio, en el caso de que el ultimo termino no tenga 'x'
+				else if(h==cadena_valida.length()-1){ 
+					k=h;
+					break;
+				}
+			}
+		}		
+    }
+	cadena_valida = PolTemp; //Copia el polinomio solo con la parte entera
+    return cadena_valida;
 }
 
 void print_string(vector<string>& vect){
