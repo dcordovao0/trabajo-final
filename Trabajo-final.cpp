@@ -66,6 +66,8 @@ for(int j = 0; j < intpol; j++){
 			ErrorInsertar = 0;
 			cout<<"Polinomio "<<j+1<<": ";
 			getline(cin >> ws, cadena);
+            if(cadena[0]!=0) cadena.insert(0,"0"); /*Inserta un 0 al inicio para evitar errores en la lectura cuando se ingresa un
+            '+' o un '-' al inicio*/ 
             ErrorInsertar=check_pol(cadena);		
 		}
         cadena_valida=esp(cadena); //Aquí se ejecuta la función esp() que borra los espacios
@@ -209,7 +211,7 @@ string bye_zero(string& cadena_valida){
 			for(int h=k; h<cadena_valida.length();h++){
 			//Encuentra otra parte del polinomio
 				if(cadena_valida[h]=='+' || cadena_valida[h]=='-' ||  cadena_valida[h]=='*' ){
-					k=h-1; //Para que copie el simbolo exacto y no el siguiente ya que la j va a aumentar con el for
+					k=h-1; //Para que copie el simbolo exacto y no el siguiente ya que la k va a aumentar con el for
 					break;
 				}
 				//Por si llega al final del polinomio, en el caso de que el ultimo termino no tenga 'x'
