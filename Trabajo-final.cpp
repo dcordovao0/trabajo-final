@@ -39,20 +39,32 @@ int main()
     string ter="";  //cada término del polinomio que se va guardando en un vector
     string num_pol; // Numero de repeticiones para ingresar el polinomio
     char c;
+    int intpol;
 
+    //Validación si la entrada es un entero
+        bool Npolinomio = false;
     cout << "Ingrese la cantidad de polinomios: ";
     getline(cin,num_pol);
-    
-    //Validación si la entrada es un entero
-    while(number_validation(num_pol)==false){
-        cout<<"Por favor, ingrese un numero entero. Ingrese la cantidad de polinomios: ";
-        getline(cin,num_pol);
-    }
-    
-    cadena_valida=Validacion_cadena(num_pol);
-    number_validation(cadena_valida);
-    int intpol;
+    while(Npolinomio == false){
+    	if(number_validation(num_pol) == false || number_validation(cadena_valida)==false){
+			while(number_validation(num_pol)==false){
+        	cout<<"Por favor, ingrese un numero entero. Ingrese la cantidad de polinomios: ";
+        	getline(cin,num_pol);
+        	Npolinomio == number_validation(num_pol);
+    		}
+		}
+    	if(number_validation(num_pol) == true){
+    		cadena_valida=Validacion_cadena(num_pol);
+    		Npolinomio = number_validation(cadena_valida);
+    		num_pol = cadena_valida;
+    		while(number_validation(num_pol)==false){
+    			cout<<"Por favor, ingrese un numero entero. Ingrese la cantidad de polinomios: ";
+        		getline(cin,num_pol);
+			}
+		}
+	}
     intpol=stoi(cadena_valida);
+    
     vector<tPolinomio>polinomios;
 
 for(int j = 0; j < intpol; j++){
@@ -130,7 +142,7 @@ for(int j = 0; j < intpol; j++){
 bool number_validation(string& num_pol){
     bool is_digit = true;   
 	for (char c : num_pol) {
-    	if (!isdigit(c) || c=='.') { //is digit reconoce si los char de una cadena de strings son números y no otros símbolos
+    	if (!isdigit(c) && c!='.') { //is digit reconoce si los char de una cadena de strings son números y no otros símbolos
     		is_digit = false;
      		break;
     	}
