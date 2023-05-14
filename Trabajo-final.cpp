@@ -11,7 +11,7 @@ Nombres: Danny Córdova/Brandom Mosquera/Cristina Proaño/ Marco Calderon
 #include <sstream>
 #include <cctype>
 
-using namespace std;
+using namespace std;  
 
 struct tPolinomio{
     int grado;
@@ -67,28 +67,44 @@ int main()
     
     vector<tPolinomio>polinomios;
 
-for(int j = 0; j < intpol; j++){
+    cout<<endl<<"Para una lectura correcta, los polinomios deben ser ingresados de la forma: a*x^n +b*x^m..."<<endl;
+
+    for(int j = 0; j < intpol; j++){
         vector<string>terminos;
         int deg = 0;
 
         bool ErrorInsertar = 1; //fuerza la entrada al while para cada polinomio
-		while(ErrorInsertar == 1){ //Verifica que los datos del string sean correctos
+		while(ErrorInsertar == 1)
+        { //Verifica que los datos del string sean correctos
 			ErrorInsertar = 0;
 			cout<<"Polinomio "<<j+1<<": ";
 			getline(cin >> ws, cadena);
-            ErrorInsertar=check_pol(cadena);		
-		}
-        cadena_valida=esp(cadena); //Aquí se ejecuta la función esp() que borra los espacios
-        if(cadena_valida[0]=='+' or cadena_valida[0]=='-') cadena_valida.insert(0,"0"); /*Inserta un 0 al inicio para evitar errores en la lectura cuando se ingresa un
-            '+' o un '-' al inicio*/  
+            ErrorInsertar=check_pol(cadena);
+            cadena_valida=esp(cadena); //Aquí se ejecuta la función esp() que borra los espacios  
+            for(int i=0;i<cadena_valida.size();i++){
+				if(cadena_valida[i]=='x'){
+                    if((cadena_valida[i-1]=='*' and cadena_valida[i+1]=='*') or cadena_valida[i+1]=='x'){
+                    		ErrorInsertar=1;               
+                	}
+            	}
+			}
+            if(ErrorInsertar == 1)
+				cout<<"Inserte correctamente el polinomio, por favor (a*x^n +b*x^m...)."<<endl;  
+        }
+            
+                               	        
+            
+        if(cadena_valida[0]=='+' or cadena_valida[0]=='-') cadena_valida.insert(0,"0"); /*Inserta un 0 al inicio para evitar errores 
+        en la lectura cuando se ingresa un '+' o un '-' al inicio*/  
         else if(cadena_valida[0]=='x') cadena_valida.insert(0,"1");
         else if((cadena_valida[0]=='+' or cadena_valida[0]=='-') and cadena_valida[1]=='x') cadena_valida.insert(0,"0");
+        
         cadena_valida=bye_zero(cadena_valida); //Se ejecuta la función bye_zero que elimina los ceros después del punto decimal del exp
         cout << "Cadena sin espacios: " << cadena_valida <<endl;
         ter = "";
-        for(size_t k = 0;k<cadena_valida.size();k++){ //Este for almacena los términos de cada polinomio 
+        for(int k = 0;k<cadena_valida.size();k++){ //Este for almacena los términos de cada polinomio 
            c = cadena_valida[k];
-           if(c == '+' || c == '-'){  //Si el programa lee un "+" o un "-" almacena lo que estaba antes de ese signo como un término
+           if(c == '+' or c == '-'){  //Si el programa lee un "+" o un "-" almacena lo que estaba antes de ese signo como un término
                terminos.push_back(ter);
                ter = c;
            }
@@ -99,7 +115,7 @@ for(int j = 0; j < intpol; j++){
         print_string(terminos);
 
         //Uso la función exp para ordenar a los coeficientes de cada polinomio según su grado
-        for(size_t k = 0; k < terminos.size(); k++){
+        for(int k = 0; k < terminos.size(); k++){
             int degter = exp(terminos[k]);
             if(deg < degter){
                 deg = degter;
@@ -134,12 +150,14 @@ for(int j = 0; j < intpol; j++){
         cout << endl << "Grado: " << grado << endl;
         polinomios.push_back(Polte);
         part = "";
+        
     }
-
     return 0;
 }
 
 bool number_validation(string& num_pol){
+    
+    //Mira si lo ingresado en el número es un número o un punto
     bool is_digit = true;   
 	for (char c : num_pol) {
     	if (!isdigit(c) && c!='.') { //is digit reconoce si los char de una cadena de strings son números y no otros símbolos
@@ -151,7 +169,9 @@ bool number_validation(string& num_pol){
 }
 
 string Validacion_cadena(string& num_pol){
-	string numPolTemp;
+	
+    //Mira si el exponente ingresado no es un entero
+    string numPolTemp;
 	for(int j=0; j<num_pol.length();j++){
 		if(num_pol[j]!='.'){
 		numPolTemp.push_back(num_pol[j]);
@@ -176,8 +196,23 @@ string Validacion_cadena(string& num_pol){
     }
     return (numPolTemp);
 }
+string esp(string& cadena){
+
+    //Quita espacios en blanco
+    string cadena_valida;
+    const char* ptr = cadena.c_str();
+            for (int i = 0; i < cadena.length(); i++) {
+                if (*ptr != ' ') { // Si el caracter actual no es un espacio, lo copiamos a la nueva cadena
+                    cadena_valida += *ptr;
+                }
+            ptr++; // Avanzamos al siguiente caracter
+            }
+            return cadena_valida;
+}
 
 bool check_pol(string& cadena){
+    
+    //Hace validaciones de que lo que se ingrese del polinomio esté correcto
     bool ErrorInsertar = 0;
     for(int k=0; k<cadena.length();k++){
 	    //Revisa caracteres que no irian en un polinomio
@@ -185,6 +220,21 @@ bool check_pol(string& cadena){
 		cadena[k]!='-' && cadena[k]!='*' && cadena[k]!='.' && cadena[k]!=' ')){
 			ErrorInsertar = 1;
 			break;	
+		}
+		if(cadena[k]=='*'){
+			if(k==cadena.length()-1){
+				ErrorInsertar=1;
+			}
+			else{
+				for(int h=k+1; h<cadena.length(); h++){
+					if(cadena[h]=='x')				
+                        break;
+					else if(cadena[h]==' ')
+						continue;
+					else 
+						ErrorInsertar=1;
+				}
+			}
 		}
 		//Revisa si el caracter es un numero y es como maximo el penultimo termino ya que se evalua mas adelante el penultimo termino
 		//el ultimo termino no afecta en si es un espacio o un numero
@@ -215,49 +265,50 @@ bool check_pol(string& cadena){
 			    }
 		    }
 		}
-	}
-			if(ErrorInsertar == 1)
-				cout<<"Inserte correctamente el polinomio, por favor"<<endl;
-            return ErrorInsertar;
+	}                
+    return ErrorInsertar;
 }
 
-string esp(string& cadena){
-
-    //Quita espacios en blanco
-    string cadena_valida;
-    const char* ptr = cadena.c_str();
-            for (int i = 0; i < cadena.length(); i++) {
-                if (*ptr != ' ') { // Si el caracter actual no es un espacio, lo copiamos a la nueva cadena
-                    cadena_valida += *ptr;
-                }
-            ptr++; // Avanzamos al siguiente caracter
-            }
-            return cadena_valida;
-}
 
 string bye_zero(string& cadena_valida){
+    
+    //Elimina los ceros del exponente
     string PolTemp;
-	for(int k=0; k<cadena_valida.length();k++){
-	    //si el char es un disnto de . lo copia
-		if(cadena_valida[k]!='.')
-			PolTemp.push_back(cadena_valida[k]);
-			//El if se mueve por la string desde el punto hasta encontrar otra parte del polinomio o el final
-		else if(cadena_valida[k]=='.'){
-			for(int h=k; h<cadena_valida.length();h++){
-			//Encuentra otra parte del polinomio
-				if(cadena_valida[h]=='+' || cadena_valida[h]=='-' ||  cadena_valida[h]=='*' ){
-					k=h-1; //Para que copie el simbolo exacto y no el siguiente ya que la k va a aumentar con el for
-					break;
-				}
-				//Por si llega al final del polinomio, en el caso de que el ultimo termino no tenga 'x'
-				else if(h==cadena_valida.length()-1){ 
-					k=h;
-					break;
+		for(int j=0; j<cadena_valida.length();j++){
+			//si el char es un disti nto de . lo copia
+			if(cadena_valida[j]!='.')
+				PolTemp.push_back(cadena_valida[j]);
+			//El if mira el punto
+			else if(cadena_valida[j]=='.'){
+				for(int k=j+1; k<cadena_valida.length();k++){
+					//si es 0 se mueve hasta encontrar un numero distinto o acabar el polinomio e igualar j
+					if(cadena_valida[k]=='0'){
+						while(cadena_valida[k]=='0'){
+							if(k==cadena_valida.length()-1){
+								j=k;
+								break;
+							}
+							k++;
+						}
+						if(cadena_valida[k]=='*' || cadena_valida[k]=='+' || cadena_valida[k]=='-' || cadena_valida[k]=='x' ){
+							j=k-1;
+							break;
+						}
+						//si encuentra un numero distinto, copia todo lo despues del punto
+						else if(cadena_valida[k] > '0' && cadena_valida[k] <='9'){
+							PolTemp.push_back(cadena_valida[j]);
+							break;
+						}
+					}
+					//si es distinto de 0 el numero despues del punto copia todo lo despues del punto
+					else if(cadena_valida[k] >= '0' && cadena_valida[k] <='9'){
+							PolTemp.push_back(cadena_valida[j]);
+							break;
+					}
 				}
 			}
-		}		
-    }
-	cadena_valida = PolTemp; //Copia el polinomio solo con la parte entera
+		}
+	cadena_valida = PolTemp; //Copia el polinomio
     return cadena_valida;
 }
 
@@ -328,7 +379,7 @@ string search_and_destroy(string& term,char& c){
 
 double erasse(string& term){
 
-    size_t aux = term.find('x');
+    int aux = term.find('x');
     if (aux != string::npos){
         term = term.substr(0,aux); //Este código se encarga de tomar todo lo que está antes de la x
     }
