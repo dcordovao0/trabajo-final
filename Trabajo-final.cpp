@@ -133,7 +133,7 @@ int main()
         double coeficiente;
         int exx;
         string part;
-        for(int m = 0; m <= deg; m++){
+        for(int m = 0; m <= 1000; m++){
             alcoe.push_back(0);
         };
         for(int h = 0; h < terminos.size(); h++){
@@ -146,8 +146,6 @@ int main()
         
         almacen= Polte.coef;
         int grado = Polte.grado;
-        cout << "Datos del polinomio cargado: " << endl;
-        print_coe(almacen);
         polinomios.push_back(Polte);
         part = ""; 
 
