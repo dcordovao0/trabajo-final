@@ -1,7 +1,7 @@
 /*
 Trabajo final de Programación en C++ I
 Profesor: Felipe Grijalva
-Nombres: Danny Córdova/Brandom Mosquera/Cristina Proaño/ Marco Calderon
+Nombres: Danny Córdova/Brandom Mosquera/Cristina Proaño/ Marco Calderón
 */
 
 #include <iostream>
@@ -30,7 +30,6 @@ int exp(string& term);
 int signo(string& term);
 string search_and_destroy(string& term,char& c);
 double erasse(string& term);
-tPolinomio suma_poli(vector<double>& all);
 
 int main()
 {
@@ -40,9 +39,15 @@ int main()
     string num_pol; // Numero de repeticiones para ingresar el polinomio
     char c;
     int intpol;
+    int deg_max= 0; //Variable para almacenar el grado maximo
+    tPolinomio PolResul ; // Variable que almacena el resultado
+    vector<double>alcoe;//Almacena coeficientes
+	tPolinomio Polte; //Polinomio Temporal
+	vector<double>almacen;//Almacen general 
+	vector<tPolinomio>polinomios;//Vector donde se guardan los polinomios
 
     //Validación si la entrada es un entero
-        bool Npolinomio = false;
+    bool Npolinomio = false;
     cout << "Ingrese la cantidad de polinomios: ";
     getline(cin,num_pol);
     while(Npolinomio == false){
@@ -65,11 +70,11 @@ int main()
 	}
     intpol=stoi(cadena_valida);
     
-    vector<tPolinomio>polinomios;
-
     cout<<endl<<"Para una lectura correcta, los polinomios deben ser ingresados de la forma: a*x^n +b*x^m..."<<endl;
 
     for(int j = 0; j < intpol; j++){
+        vector<double> alcoe;
+        vector<double>almacen;
         vector<string>terminos;
         int deg = 0;
 
@@ -100,7 +105,6 @@ int main()
         else if((cadena_valida[0]=='+' or cadena_valida[0]=='-') and cadena_valida[1]=='x') cadena_valida.insert(0,"0");
         
         cadena_valida=bye_zero(cadena_valida); //Se ejecuta la función bye_zero que elimina los ceros después del punto decimal del exp
-        cout << "Cadena sin espacios: " << cadena_valida <<endl;
         ter = "";
         for(int k = 0;k<cadena_valida.size();k++){ //Este for almacena los términos de cada polinomio 
            c = cadena_valida[k];
@@ -110,9 +114,8 @@ int main()
            }
            else ter = ter + c;
         }
-        
+         
         terminos.push_back(ter);
-        print_string(terminos);
 
         //Uso la función exp para ordenar a los coeficientes de cada polinomio según su grado
         for(int k = 0; k < terminos.size(); k++){
@@ -121,15 +124,15 @@ int main()
                 deg = degter;
             }
         }
-        cout << "El grado del polinomio ingresado es " << deg<<endl;
-        tPolinomio Polte; //Polinomio Temporal
+        if(deg> deg_max ) {
+        	deg_max = deg;
+		}
         Polte.grado = deg;
 
         //Almaceno los coeficientes en un vector de double
         double coeficiente;
         int exx;
         string part;
-        vector<double>alcoe; //Almacena coeficientes
         for(int m = 0; m <= deg; m++){
             alcoe.push_back(0);
         };
@@ -140,18 +143,69 @@ int main()
             alcoe[exx] = coeficiente;
         }
         Polte.coef=alcoe;
-
-        vector<double>almacen = Polte.coef;
         
+        almacen= Polte.coef;
         int grado = Polte.grado;
-
         cout << "Datos del polinomio cargado: " << endl;
         print_coe(almacen);
-        cout << endl << "Grado: " << grado << endl;
         polinomios.push_back(Polte);
-        part = "";
-        
+        part = ""; 
+
     }
+//Empieza la suma 
+	PolResul.grado = deg_max;
+	cout<<endl<<"El grado de la suma es: "<<deg_max<<endl; // Asigna el grado maximo en la estructura resultante 
+	PolResul.coef.push_back(0);
+    vector<double>sum(deg_max,0);
+    
+		
+	for (int i=0;i<=deg_max;i++){
+		double x = 0;
+		for (int j=0;j<polinomios.size();j++){
+			x = x + polinomios[j].coef[i];
+		}	
+		PolResul.coef[i]=x;
+	}	
+	
+	
+	// Imprimo los resultados
+	cout<<"La suma es: ";
+	int contadorGrado=deg_max;
+	for (int i=deg_max;i>=0;i--){
+	    if (PolResul.coef[i]!=0){
+	    	if(i!=0){
+	    		if(PolResul.coef[i-1]<0)
+	    		cout<<PolResul.coef[i]<<"*x"<<contadorGrado;
+	    		else if(PolResul.coef[i-1]>0)
+	    		cout<<PolResul.coef[i]<<"*x"<<contadorGrado<<"+";
+	    		else if(PolResul.coef[i-1] == 0){
+	    			int j = i-1;
+	    			while (PolResul.coef[j] == 0){
+						j--;
+						if(j==-1){
+							cout<<PolResul.coef[i]<<"*x"<<contadorGrado;
+							break;
+						}
+					if(PolResul.coef[j]<0){
+	    					cout<<PolResul.coef[i]<<"*x"<<contadorGrado;
+	    					break;
+	    				}
+	    				else if(PolResul.coef[j]>0){
+	    					cout<<PolResul.coef[i]<<"*x"<<contadorGrado<<"+";	
+							break;
+						}
+					}
+				}
+			}
+			else if(i==0 && PolResul.coef[i]!=0)
+				cout<<PolResul.coef[i];
+			contadorGrado--;
+		}
+		else if(PolResul.coef[i]==0){
+			contadorGrado--;
+		}
+	}
+
     return 0;
 }
 
@@ -412,11 +466,4 @@ double erasse(string& term){
     }
 
     return(n);
-}
-
-tPolinomio suma_poli(vector<double>& all){
-    
-    //Suma los polinomios
-    tPolinomio suma;
-    return suma;
 }
