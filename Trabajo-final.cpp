@@ -92,7 +92,12 @@ int main()
                     		ErrorInsertar=1;               
                 	}
             	}
-			}
+                else if (cadena_valida[i]=='+' or cadena_valida[i]=='-'){
+                    if(cadena_valida[i+1]=='+'  or cadena_valida[i+1]=='-'){
+                    		ErrorInsertar=1;               
+                	}
+                }
+            }
             if(ErrorInsertar == 1)
 				cout<<"Inserte correctamente el polinomio, por favor (a*x^n +b*x^m...)."<<endl;  
         }
@@ -133,7 +138,7 @@ int main()
         double coeficiente;
         int exx;
         string part;
-        for(int m = 0; m <= 1000; m++){
+        for(int m = 0; m <= deg_max; m++){
             alcoe.push_back(0);
         };
         for(int h = 0; h < terminos.size(); h++){
@@ -150,7 +155,12 @@ int main()
         part = ""; 
 
     }
-//Empieza la suma 
+    for(int i=0;i<polinomios.size();i++){
+        for(int m =polinomios[i].coef.size() ; m <= deg_max; m++){
+            polinomios[i].coef.push_back(0);
+        };
+    }
+    //Empieza la suma 
 	PolResul.grado = deg_max;
 	cout<<endl<<"El grado de la suma es: "<<deg_max<<endl; // Asigna el grado maximo en la estructura resultante 
 	PolResul.coef.push_back(0);
